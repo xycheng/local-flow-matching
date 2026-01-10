@@ -1,0 +1,59 @@
+data:
+  dataname: 'cifar10'          
+  root: './data'              
+  image_shape: [32, 32]
+  channels: 3
+  num_workers: 2
+  pin_memory: true
+  
+base_dir: 'results_cifar'
+save_dir: 'cifar_N4'
+
+model:
+  hidden_dim: 128        # base width; divisible by 32; 256 for GLM
+  unet_dim_mults: [1,2,2,2] 
+  dropout: 0.1  
+  res_depth: 2           # 2 default for open-ai style unet
+  num_head_channels: 32  # default for cifar, low resolutions
+  
+  #L: 0
+  #hks: [null]
+  
+  L: 3    # L = N-1, since the last block is hks = None
+  hks: [0.1,        0.15,       0.225,      null] # exp(c=.1, rho=1.5)
+  # hks: [0.2,        0.3,       0.45,      null]    # exp(c=.2, rho=1.5)
+  # hks: [0.3,        0.33,       0.363,      null]    # exp(c=.3, rho=1.1)
+  #hks: [0.08302011, 0.2697481,  0.61525887, null] #diffusion cosine
+  # hks: [0.012659, 0.212834, 0.551812, None] #diffusion linear
+  
+  coupling: 'dependent'  # dependent | shuffled | independent
+  interp: 'linear'       # linear | trig
+  beta_sample_t: true    
+  alpha: 1.0
+  beta: 1.0
+  
+training:
+  load_ema: true
+  batch_size: 256
+  batch_push_size: 512 
+  flip_aug: true
+  max_batch: 50000 
+  warm_start: true      # Warm start current flow with previous flow
+  lr: 0.0001 
+  warmup: 5000
+  use_grad_clip: true
+  ema_decay: 0.9999
+  resume: false         # Resume training from the last checkpoint
+  eval_only: false
+
+eval:
+  cal_fid: true
+  fid_num_samples: 50000
+  gen_bs: 512
+
+ode:
+  method: dopri5
+  tol: 1e-3
+  
+visualize:
+  viz_freq: 10000       # Frequency of visualization in terms of number of batches

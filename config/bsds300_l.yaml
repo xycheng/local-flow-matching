@@ -1,0 +1,54 @@
+data:
+  dataname: 'bsds300'
+  data_root: './data'
+  num_workers: 0
+  pin_memory: true
+  all_on_device: true
+
+base_dir: 'results_tabular'
+save_dir: 'bsds300_N4'
+
+model:
+  L: 3    # N = L+1 (one hk per block)
+  hks: [0.25, 0.25, 0.25, None]
+  
+  hidden_dim: 512
+  num_hidden: 4
+  act: 'elu'
+  cat_t: 'first'         # first | all, default is 'first'
+  coupling: 'dependent'  # dependent | shuffled | independent
+  interp: 'trig'         # linear | trig
+
+  beta_sample_t: false
+  alpha: 1.0
+  beta: 1.0
+  num_tk: 1
+
+ode:
+  method: dopri5
+  tol: 1e-3
+
+training:
+  batch_size: 1000
+  max_batch: 30000 #30k
+  resume: false
+  eval_only: false
+  warm_start: false 
+  batch_push_size: 2000
+  
+  lr: 0.002 # Learning rate
+  lr_decay: 0.8 # Learning rate decay
+  lr_step: 4000 # Frequency of learning rate decay
+  
+  warmup: 1000 #not to takeinto account to ema
+  use_grad_clip: true
+  grad_clip: 1.0
+  ema_decay: 0.999
+  use_ema: false
+  load_ema: false # if use_ema is false, it forced to be false
+  
+visualize:
+  viz_freq: 10000
+
+eval:
+  test_batch_size: 2000

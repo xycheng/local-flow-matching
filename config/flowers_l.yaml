@@ -1,0 +1,54 @@
+data:
+  dataname: 'flowers'
+  root: './data'              # or /path/to/dataset_root
+  image_shape: [128, 128]
+  channels: 3
+  num_workers: 2
+  pin_memory: true
+
+base_dir: 'results_flowers'
+save_dir: 'flowers_N4' 
+
+model:
+  hidden_dim: 64 # base width; divisible by 32
+  unet_dim_mults: [1,1,2,3,4] 
+  dropout: 0.0
+  res_depth: 2 
+  num_head_channels: 64 #default 64 for flowers, 128×128, high visual structure
+  attention_resolution: 16
+  
+  #L: 0
+  #hks: [null]
+  L: 3    # L = N-1, since the last block is hks = None
+  hks: [0.5,        0.75,       1.125,      null] # exp(c=.5, rho=1.5) #Chen's exp
+  
+  coupling: 'dependent'  # dependent | shuffled | independent
+  interp: 'linear'       # linear | trig
+  beta_sample_t: true 
+  alpha: 1.0
+  beta: 1.0
+  
+training:
+  load_ema: true
+  ema_decay: 0.999
+  batch_size: 40 
+  batch_push_size: 128 # Batch size for pushing forward
+  max_batch: 40000 # Maximum number of batches
+  warm_start: true # Warm start current flow with previous flow
+  lr: 0.0002 # Learning rate
+  warmup: 5000
+  use_grad_clip: true
+  resume: false # Resume training from the last checkpoint
+  eval_only: false
+
+eval:
+  cal_fid: true
+  fid_num_samples: 5000
+  gen_bs: 128
+
+ode:
+  method: dopri5
+  tol: 1e-3
+  
+visualize:
+  viz_freq: 10000 # Frequency of visualization in terms of number of batches

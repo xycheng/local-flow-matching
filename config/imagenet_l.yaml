@@ -1,0 +1,55 @@
+data:
+  dataname: 'imagenet32'
+  root: './data'              # or /path/to/dataset_root
+  image_shape: [32, 32]
+  channels: 3
+  num_workers: 2
+  pin_memory: true
+  
+
+base_dir: 'results_imagenet32' 
+save_dir: 'imagenet32_N4' 
+
+model:
+  hidden_dim: 128 # base width; divisible by 32
+  unet_dim_mults: [1,2,2,2] 
+  dropout: 0.0
+  res_depth: 3
+  attention_resolution: [16,8]
+  num_head_channels: 64 #default for imagenet when base channel is 128+
+  
+  #L: 0
+  #hks: [null]
+  L: 3    # L = N-1, since the last block is hks = None
+  hks: [0.3,        0.33,       0.363,      null] # exp(c=.3, rho=1.1) 
+
+  coupling: 'dependent'  # dependent | shuffled | independent
+  interp: 'linear'       # linear | trig
+  beta_sample_t: true    # sample t from beta distribution in FM loss
+  alpha: 1.0
+  beta: 1.0
+  
+training:
+  load_ema: true
+  ema_decay: 0.9999 
+  batch_size: 256 
+  batch_push_size: 512    # Batch size for pushing forward
+  max_batch: 200000       # Maximum number of batches
+  warm_start: true        # Warm start current flow with previous flow
+  lr: 0.0001              # Learning rate
+  use_grad_clip: true 
+  warmup: 5000
+  resume: false           # Resume training from the last checkpoint
+  eval_only: false
+
+eval:
+  cal_fid: true
+  fid_num_samples: 50000
+  gen_bs: 512
+
+ode:
+  method: dopri5
+  tol: 1e-3
+  
+visualize:
+  viz_freq: 10000         # Frequency of visualization in terms of number of batches

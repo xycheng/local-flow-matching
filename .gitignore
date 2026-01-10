@@ -1,0 +1,27 @@
+# data & results
+data/
+
+# But allow PNGs directly under data/
+!data/*.png
+
+# environments
+.venv/
+venv/
+env/
+*.conda
+
+# python
+__pycache__/
+*.pyc
+
+# notebook
+.ipynb_checkpoints/
+
+# OS
+.DS_Store
+
+# Ignore all results by default
+results*/
+
+
+

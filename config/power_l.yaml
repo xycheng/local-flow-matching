@@ -1,0 +1,53 @@
+data:
+  dataname: 'power'
+  data_root: './data'
+  num_workers: 0
+  pin_memory: true
+  all_on_device: true
+
+base_dir: 'results_tabular'
+save_dir: 'power_N4'
+
+model:
+  L: 3    # N = L+1 (one hk per block)
+  hks: [0.15, 0.195, 0.2535, None] #(c,rho)=(0.15, 1.3)
+  hidden_dim: 256
+  num_hidden: 4
+  act: 'relu'
+  cat_t: 'first'         # first | all, default is 'first'
+  coupling: 'dependent'  # dependent | shuffled | independent
+  interp: 'trig'       # linear | trig
+
+  beta_sample_t: false #if false, then t Unif[0,1]
+  alpha: 1.0
+  beta: 1.0
+  num_tk: 1
+
+ode:
+  method: dopri5   # dopri5 | rk4 | euler
+  tol: 1e-3
+
+training:
+  batch_size: 30000
+  max_batch: 100000 
+  resume: false
+  eval_only: false
+  warm_start: true 
+  batch_push_size: 30000
+
+  lr: 0.005 # Learning rate
+  lr_decay: 0.99 # Learning rate decay
+  lr_step: 1000 # Frequency of learning rate decay
+  
+  warmup: 1000 #steps not to takeinto account to ema
+  use_grad_clip: false
+  grad_clip: 1.0
+  ema_decay: 0.999
+  use_ema: false
+  load_ema: false # if use_ema is false, it forced to be false
+
+visualize:
+  viz_freq: 10000
+
+eval:
+  test_batch_size: 30000

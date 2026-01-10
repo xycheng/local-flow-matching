@@ -1,0 +1,58 @@
+data:
+  dataname: "tree"          # expects {data_root}/img_tree.png
+  data_root: "./data"
+  ntr: 2000000
+  nte: 100000 
+  num_workers: 0
+  pin_memory: true
+  all_on_device: true
+
+base_dir: 'results_2d'
+save_dir: 'tree_N6'
+
+model:
+  L: 5                      # total blocks = L+1
+  hks: [0.025, 0.031, 0.039, 0.049, 0.061, null]   # one per block; last null means "free" -> x1 = N(0,I)
+  #hks: [0.037432, 0.111176, 0.20416, 0.347534, 0.659033, None] #diffusion cosine
+
+  #L: 8 # Number of blocks
+  #hks: [0.025, 0.031, 0.039, 0.049, 0.061, 0.076, 0.095, 0.119, None] # Last is always None = Free block
+  
+  hidden_dim: 256
+  num_hidden: 3
+  act: "softplus"           # "elu" | "relu" | "softplus"
+  cat_t: "first"            # "first" or "all"
+  coupling: "dependent"     # "dependent" | "shuffled" | "independent"
+  interp: "linear"          # "linear" | "trig"
+  beta_sample_t: true
+  alpha: 1.0
+  beta: 1.0
+
+ode:
+  method: "dopri5"          # "dopri5" | "rk4" | "euler"
+  tol: 1e-3
+
+training:
+  batch_size: 10000 
+  max_batch: 50000  # or list [..] per block
+  resume: true
+  eval_only: false
+  warm_start: true 
+  batch_push_size: 10000
+
+  lr: 0.0002 # Learning rate
+  lr_decay: 0.99 # Learning rate decay
+  lr_step: 1000 # Frequency of learning rate decay
+
+  use_grad_clip: false
+  grad_clip: 1.0
+  use_ema: false
+  load_ema: false
+  ema_decay: 0.999
+
+visualize:
+  viz_freq: 10000
+  n_plot: 10000
+
+eval:
+  test_batch_size: 10000
