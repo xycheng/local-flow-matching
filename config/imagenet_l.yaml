@@ -21,7 +21,8 @@ model:
   #L: 0
   #hks: [null]
   L: 3    # L = N-1, since the last block is hks = None
-  hks: [0.3,        0.33,       0.363,      null] # exp(c=.3, rho=1.1) 
+  hks: [0.1,        0.15,       0.225,      null] # exp(c=.1, rho=1.5)
+  #hks: [0.3,        0.33,       0.363,      null] # exp(c=.3, rho=1.1) 
 
   coupling: 'dependent'  # dependent | shuffled | independent
   interp: 'linear'       # linear | trig
